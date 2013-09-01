@@ -318,6 +318,16 @@ SC.SelectFieldView = SC.FieldView.extend(
   touchEnd: function(evt) {
     return this.mouseUp(evt);
   },
+  
+  keyDown: function(evt) {
+    // Handle return and escape.  this way they can be passed on to the responder chain.
+    if ((evt.which === SC.Event.KEY_RETURN) || (evt.which === SC.Event.KEY_ESC)) { return NO; }
+    // Keystrokes can change the selected menu item, so we update the value accordingly.
+    // We have to invoke the synchronization later, however, because apparently the value
+    // doesn't update immediately, even if we call sc_super() before _field_fieldValueDidChange().
+    this.invokeLater('_field_fieldValueDidChange');
+    return sc_super();
+  },
 
   // when fetching the raw value, convert back to an object if needed...
   /** @private */
