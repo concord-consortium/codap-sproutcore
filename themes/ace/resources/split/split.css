@@ -2,7 +2,7 @@
 $theme.split-divider {
   background: transparent;
   border: 0px none;
-  z-index: 1;
+  /* z-index: 1; KCPT */
 
   .line {
     background: #333;
