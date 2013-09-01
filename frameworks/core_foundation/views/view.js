@@ -1231,20 +1231,38 @@ SC.CoreView.reopen(
   clippingFrame: function() {
     var f = this.get('frame'),
         ret = f,
-        pv, cf;
+        pv, cf, gf;
 
     if (!f) return null;
     pv = this.get('parentView');
     if (pv) {
       cf = pv.get('clippingFrame');
       if (!cf) return { x: 0, y: 0, width: f.width, height: f.height};
-      ret = SC.intersectRects(cf, f);
+      // [KCPT] The original SproutCore implementation didn't account for scrolling.
+      // To do so, we convert everything to global coordinates and perform our
+      // view intersections in global coordinates.
+      gf = pv.convertFrameToView(f, null);
+      // The final subtlety is that the SC.ContainerView that is the immediate child of
+      // the SC.ScrollView is not affected by the scroll position, so we have to undo
+      // the effect of the scroll position on that view when performing our calculations.
+      if (SC.kindOf(this, SC.ContainerView) && SC.kindOf(pv, SC.ScrollView)) {
+        gf.x += pv.get('horizontalScrollOffset') || 0;
+        gf.y += pv.get('verticalScrollOffset') || 0;
+      }
+      // Convert the parent view's clippingFrame to global coordinates as well.
+      cf = pv.convertFrameToView(cf, null);
+      ret = SC.intersectRects(cf, gf);
+      // Convert back to view coordinates before returning
+      ret = this.convertFrameFromView(ret, null, true);
+      // [/KCPT]
     }
-    ret.x -= f.x;
-    ret.y -= f.y;
+    else {
+      ret.x -= f.x;
+      ret.y -= f.y;
+    }
 
     return ret;
-  }.property('parentView', 'frame').cacheable(),
+  }.property('parentView', 'frame', 'horizontalScrollOffset', 'verticalScrollOffset').cacheable(),
 
   /** @private
     This method is invoked whenever the clippingFrame changes, notifying
