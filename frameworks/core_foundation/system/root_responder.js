@@ -1111,6 +1111,18 @@ SC.RootResponder = SC.Object.extend(
     var target = touch.targetView, view = target,
         chain = [], idx, len;
 
+    /* [KCPT]
+    Here we have a hack to prevent DG's document scroll view from capturing a touch that is meant to be handled
+    by a Raphael-based sub-view of a component. In such a situation the target is the view that actually wants
+    the touch, and it has a superview (e.g. a graphView) that can serve to capture all SC notions of touch and allow
+    them to continue to the target.
+     */
+    if( target.get('touchPriority')) {
+      this.makeTouchResponder( touch, target, shouldStack, YES);
+      return;
+    }
+    // [/KCPT]
+
     if (SC.LOG_TOUCH_EVENTS) {
       SC.Logger.info('  -- Received one touch on %@'.fmt(target.toString()));
     }
