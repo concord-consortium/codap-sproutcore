@@ -300,6 +300,9 @@ SC.View.reopen(
     // walk up this side
     while (view) {
       f = view.get('frame'); myX += f.x; myY += f.y ;
+      // [KCPT] Must account for scroll offsets if there are any
+      myX -= view.get('horizontalScrollOffset') || 0;
+      myY -= view.get('verticalScrollOffset') || 0;
       view = view.get('layoutView') ;
     }
 
@@ -308,6 +311,9 @@ SC.View.reopen(
       view = targetView ;
       while (view) {
         f = view.get('frame'); targetX += f.x; targetY += f.y ;
+        // [KCPT] Must account for scroll offsets if there are any
+        targetX -= view.get('horizontalScrollOffset') || 0;
+        targetY -= view.get('verticalScrollOffset') || 0;
         view = view.get('layoutView') ;
       }
     }
@@ -334,13 +340,18 @@ SC.View.reopen(
     @returns {Rect} converted frame
     @test in converFrames
   */
-  convertFrameFromView: function(frame, targetView) {
+  convertFrameFromView: function(frame, targetView, iCorrectScrollOffset) {
     var myX=0, myY=0, targetX=0, targetY=0, view = this, f ;
 
     // walk up this side
     //Note: Intentional assignment of variable f
     while (view && (f = view.get('frame'))) {
       myX += f.x; myY += f.y ;
+      // [KCPT] Must account for scroll offsets if there are any
+      if( iCorrectScrollOffset) {
+        myX -= view.get('horizontalScrollOffset') || 0;
+        myY -= view.get('verticalScrollOffset') || 0;
+      }
       view = view.get('parentView') ;
     }
 
@@ -349,6 +360,11 @@ SC.View.reopen(
       view = targetView ;
       while(view) {
         f = view.get('frame'); targetX += f.x; targetY += f.y ;
+        // [KCPT] Must account for scroll offsets if there are any
+        if( iCorrectScrollOffset) {
+          targetX -= view.get('horizontalScrollOffset') || 0;
+          targetY -= view.get('verticalScrollOffset') || 0;
+        }
         view = view.get('parentView') ;
       }
     }
