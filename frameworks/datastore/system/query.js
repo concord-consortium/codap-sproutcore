@@ -384,18 +384,27 @@ SC.Query = SC.Object.extend(SC.Copyable, SC.Freezable,
 
     // fast cases go here
     if (record1 === record2) return 0;
+    
+    function compareStoreKeys(rec1, rec2) {
+      var sk1 = rec1.get('storeKey'),
+          sk2 = rec2.get('storeKey');
+      if(sk1 < sk2) return -1;
+      if(sk1 > sk2) return 1;
+      return 0;
+    }
 
     // if called for the first time we have to build the order array
     if (!this._isReady) this.parse();
     if (!this._isReady) { // can't parse, so use storeKey.  Not proper, but consistent.
-      return SC.compare(record1.get('storeKey'),record2.get('storeKey'));
+      return compareStoreKeys(record1, record2);
     }
 
     // For every property specified in orderBy until non-eql result is found.
     // Or, if orderBy is a comparison function, simply invoke it with the
     // records.
     order = this._order;
-    if (SC.typeOf(order) === SC.T_FUNCTION) {
+    // typeof operator is more efficient than SC.typeOf
+    if ((typeof order === "function") && !order.isClass) {
       result = order.call(null, record1, record2);
     }
     else {
@@ -420,7 +429,7 @@ SC.Query = SC.Object.extend(SC.Copyable, SC.Freezable,
 
     // return result or compare by storeKey
     if (result !== 0) return result ;
-    else return SC.compare(record1.get('storeKey'),record2.get('storeKey'));
+    return compareStoreKeys(record1, record2);
   },
 
   /** @private
