@@ -89,7 +89,8 @@ SC._PropertyChain = SC.Object.extend(
     // If no parameter is passed, assume we are the root in the chain
     // and look up property relative to the target, since dependent key
     // paths are always relative.
-    if (!newObject) { newObject = this.get('target'); }
+    // [KCPT] Don't default null objects to top-level target.
+    //if (!newObject) { newObject = this.get('target'); }
 
     if (curObject && curObject!==newObject) {
       this.deactivate();

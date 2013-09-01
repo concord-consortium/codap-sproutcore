@@ -544,7 +544,8 @@ SC.Observable = /** @scope SC.Observable.prototype */{
         dep = keys[idx] ;
 
         if (dep.indexOf('.') >= 0) {
-          SC._PropertyChain.createChain(dep, this, key).activate();
+          // [KCPT] Must specify activation object rather than defaulting it
+          SC._PropertyChain.createChain(dep, this, key).activate(this);
         } else {
           // add dependent key to dependents array of key it depends on
           queue = dependents[dep] ;
