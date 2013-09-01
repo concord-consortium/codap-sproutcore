@@ -459,6 +459,13 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
   },
 
   /**
+    Count of the number of deferred calls to flush() that have been queued
+    due to "pacing". If the scheduledFlushCount is greater than zero, then
+    the last flush was not completed.
+   */
+  scheduledFlushCount: 0,
+  
+  /**
     Applies the query to any pending changed store keys, updating the record
     array contents as necessary.  This method is called automatically anytime
     you access the RecordArray to make sure it is up to date, but you can
@@ -579,12 +586,14 @@ SC.RecordArray = SC.Object.extend(SC.Enumerable, SC.Array,
       var self = this;
       // use setTimeout here to guarantee that we hit the next runloop,
       // and not the same runloop which the invoke* methods do not guarantee
+      this.incrementProperty('scheduledFlushCount');
       window.setTimeout(function() {
         SC.run(function() {
           if(!self || self.get('isDestroyed')) return;
           self.set('needsFlush', YES);
           self._scq_changedStoreKeys = SC.IndexSet.create().addEach(storeKeysToPace);
           self.flush();
+          self.decrementProperty('scheduledFlushCount');
         });
       }, 1);
     }
