@@ -1960,6 +1960,9 @@ SC.ScrollView = SC.View.extend({
     edit the location of the contentView.
   */
   _scroll_horizontalScrollOffsetDidChange: function() {
+    // [KCPT] Let child views know their clipping frame may have changed
+    this._sc_view_clippingFrameDidChange();
+    // [/KCPT]
     this.invokeLast(this.adjustElementScroll);
   }.observes('horizontalScrollOffset'),
 
@@ -1968,6 +1971,9 @@ SC.ScrollView = SC.View.extend({
     edit the location of the contentView.
   */
   _scroll_verticalScrollOffsetDidChange: function() {
+    // [KCPT] Let child views know their clipping frame may have changed
+    this._sc_view_clippingFrameDidChange();
+    // [/KCPT]
     this.invokeLast(this.adjustElementScroll);
   }.observes('verticalScrollOffset'),
 
