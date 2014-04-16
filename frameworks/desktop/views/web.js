@@ -42,7 +42,9 @@ SC.WebView = SC.View.extend(SC.Control, {/** @scope SC.WebView.prototype */
     @param {Boolean} firstTime
   */
   render: function(context, firstTime) {
-    var src = this.get('value'), iframe;
+    // This is a change that appears in a later version of SC. Brought in to fix bug in Chrome
+    // behavior, namely that iFrames would show up as 'not found'
+    var src = this.get('value') || '', iframe;
 
     if (firstTime) {
       context.push('<iframe src="' + src +
