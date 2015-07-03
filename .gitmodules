@@ -1,3 +1,6 @@
 [submodule "apps/showcase"]
 	path = apps/showcase
-	url = https://github.com/concord-consortium/codap-showcase.git
+	url = git://github.com/sproutcore/showcase.git
+[submodule "apps/greenhouse"]
+	path = apps/greenhouse
+	url = git://github.com/sproutcore/greenhouse.git

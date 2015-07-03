@@ -13,4 +13,6 @@ Gemfile*
 *.orig
 .sass-cache/
 .strobe/
-.idea/
+.project
+.settings/
+.idea

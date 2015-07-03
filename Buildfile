@@ -34,7 +34,7 @@ config :runtime,         :required => [:jquery]
 config :'datetime/core', :required => [:runtime]
 config :datetime,        :required => [:'datetime/core']
 config :core_foundation, :required => [:runtime, :yuireset]
-config :'datetime/localized', :required => [:core_foundation]
+config :'datetime/localized', :required => ["datetime/core", :core_foundation]
 config :routing,         :required => [:core_foundation]
 config :foundation,      :required => [:routing, :core_foundation, :datetime, :'datetime/localized', :ajax]
 config :datastore,       :required => [:runtime, :datetime]
@@ -43,11 +43,12 @@ config :desktop,         :required => [:foundation]
 config :media,           :required => [:desktop]
 config :statechart,      :required => [:core_foundation], :test_required => [:core_foundation, :desktop, :routing]
 config :ajax,            :required => [:runtime, :core_foundation]
+config :designer,        :required => [:runtime, :foundation, :desktop]
 
 config :"experimental/split_view", :test_required => [:desktop]
 
 # WRAPPER FRAMEWORKS
-config :sproutcore, :required => [:desktop, :datastore, :statechart, :template_view]
+config :sproutcore, :required => [:desktop, :datastore, :statechart]
 config :animation, :required => :foundation
 
 config :qunit, :required => []
@@ -107,5 +108,4 @@ config :core_tools, :required => [
   # mode :debug do
   #   config app_target, :combine_javascript => false
   # end
-
 end

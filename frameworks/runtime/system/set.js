@@ -53,7 +53,7 @@ sc_require('mixins/copyable');
         var foundNames = SC.Set.create();
 
         // creates a set with four names in it.
-        var names = SC.Set.create(["Charles", "Tom", "Juan", "Alex"]) ; // :P
+        var names = SC.Set.create(["Charles", "Tom", "Juan", "Alex"]);
 
         // creates a copy of the names set.
         var namesCopy = SC.Set.create(names);
@@ -262,8 +262,7 @@ SC.Set = SC.mixin({},
     // if there is no set, there can be no currently observing set observers
     if (!this.setObservers) return;
 
-    // remove the set observer. Pretty simple, if you think about it. I mean,
-    // honestly.
+    // remove the set observer. Pretty simple, if you think about it.
     this.setObservers.remove(setObserver);
   },
 
@@ -367,8 +366,10 @@ SC.Set = SC.mixin({},
       this[guid] = idx;
     }
 
-    // reduce the length
+    // Throw away the last object (it has been moved or is the object we are removing).
+    delete this[len-1];
     this.length = len-1;
+
     if (this.isObservable) this.enumerableContentDidChange();
     if (this.setObservers) this.didRemoveItem(obj);
     return this ;

@@ -16,7 +16,7 @@ SC.SCANNER_OUT_OF_BOUNDS_ERROR = new Error("Out of bounds.");
 
 /**
   Standard error thrown by `SC.Scanner` when  you pass a value not an integer.
-  
+
   @static
   @constant
   @type Error
@@ -25,15 +25,15 @@ SC.SCANNER_INT_ERROR = new Error("Not an int.");
 
 /**
   Standard error thrown by `SC.SCanner` when it cannot find a string to skip.
-  
+
   @static
   @constant
   @type Error
 */
 SC.SCANNER_SKIP_ERROR = new Error("Did not find the string to skip.");
 
-/** 
-  Standard error thrown by `SC.Scanner` when it can any kind a string in the 
+/**
+  Standard error thrown by `SC.Scanner` when it can any kind a string in the
   matching array.
 
   @static
@@ -43,7 +43,7 @@ SC.SCANNER_SKIP_ERROR = new Error("Did not find the string to skip.");
 SC.SCANNER_SCAN_ARRAY_ERROR = new Error("Did not find any string of the given array to scan.");
 
 /**
-  Standard error thrown when trying to compare two dates in different 
+  Standard error thrown when trying to compare two dates in different
   timezones.
 
   @static
@@ -69,38 +69,38 @@ SC.DATETIME_ISO8601 = '%Y-%m-%dT%H:%M:%S%Z';
   assign the scanner's string on initialization and the scanner progresses
   through the characters of that string from beginning to end as you request
   items.
-  
+
   Scanners are used by `DateTime` to convert strings into `DateTime` objects.
-  
+
   @extends SC.Object
   @since SproutCore 1.0
   @author Martin Ottenwaelter
 */
 SC.Scanner = SC.Object.extend(
 /** @scope SC.Scanner.prototype */ {
-  
+
   /**
     The string to scan. You usually pass it to the create method:
-    
+
         SC.Scanner.create({string: 'May, 8th'});
-    
+
     @type String
   */
   string: null,
-  
+
   /**
     The current scan location. It is incremented by the scanner as the
     characters are processed.
     The default is 0: the beginning of the string.
-    
+
     @type Integer
   */
   scanLocation: 0,
-  
+
   /**
     Reads some characters from the string, and increments the scan location
-    accordingly. 
-    
+    accordingly.
+
     @param {Integer} len The amount of characters to read
     @throws {SC.SCANNER_OUT_OF_BOUNDS_ERROR} If asked to read too many characters
     @returns {String} The characters
@@ -111,10 +111,10 @@ SC.Scanner = SC.Object.extend(
     this.scanLocation += len;
     return str;
   },
-  
+
   /**
     Reads some characters from the string and interprets it as an integer.
-    
+
     @param {Integer} min_len The minimum amount of characters to read
     @param {Integer} [max_len] The maximum amount of characters to read (defaults to the minimum)
     @throws {SC.SCANNER_INT_ERROR} If asked to read non numeric characters
@@ -131,10 +131,10 @@ SC.Scanner = SC.Object.extend(
     }
     return parseInt(match[0], 10);
   },
-  
+
   /**
     Attempts to skip a given string.
-    
+
     @param {String} str The string to skip
     @throws {SC.SCANNER_SKIP_ERROR} If the given string could not be scanned
     @returns {Boolean} YES if the given string was successfully scanned, NO otherwise
@@ -143,10 +143,10 @@ SC.Scanner = SC.Object.extend(
     if (this.scan(str.length) !== str) throw SC.SCANNER_SKIP_ERROR;
     return YES;
   },
-  
+
   /**
     Attempts to scan any string in a given array.
-    
+
     @param {Array} ary the array of strings to scan
     @throws {SC.SCANNER_SCAN_ARRAY_ERROR} If no string of the given array is found
     @returns {Integer} The index of the scanned string of the given array
@@ -160,7 +160,7 @@ SC.Scanner = SC.Object.extend(
     }
     throw SC.SCANNER_SCAN_ARRAY_ERROR;
   }
-  
+
 });
 
 
@@ -178,27 +178,27 @@ SC.Scanner = SC.Object.extend(
       // Creates a DateTime representing 5am in Washington, DC and 10am in London
       var d = SC.DateTime.create({ hour: 5, timezone: 300 }); // -5 hours from UTC
       var e = SC.DateTime.create({ hour: 10, timezone: 0 }); // same time, specified in UTC
-    
+
   and it is true that `d.isEqual(e)`.
 
   The time zone specified upon creation is permanent, and any calls to
   `get()` on that instance will return values expressed in that time zone. So,
-  
+
       d.get('hour') returns 5.
       e.get('hour') returns 10.
-    
+
   but
-    
+
       d.get('milliseconds') === e.get('milliseconds')
-  
+
   is true, since they are technically the same position in time.
-  
-  You can also use SC.DateTime as a record attribute on a data model. 
-  
+
+  You can also use SC.DateTime as a record attribute on a data model.
+
       SC.Record.attr(SC.DateTime); // Default format is ISO8601. See `SC.DateTime.recordFormat`
       SC.Record.attr(SC.DateTime, { format: '%d/%m/%Y' }); // Attribute stored as a string in '%d/%m/%Y' format
-      SC.Record.attr(SC.DateTime, { useUnixTime: YES }); // Attribute stored as a number in Unix time 
-   
+      SC.Record.attr(SC.DateTime, { useUnixTime: YES }); // Attribute stored as a number in Unix time
+
   @extends SC.Object
   @extends SC.Freezable
   @extends SC.Copyable
@@ -209,13 +209,13 @@ SC.Scanner = SC.Object.extend(
 */
 SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
 /** @scope SC.DateTime.prototype */ {
-  
+
   /**
     @private
 
     Internal representation of a date: the number of milliseconds
     since January, 1st 1970 00:00:00.0 UTC.
-    
+
     @property
     @type {Integer}
   */
@@ -229,7 +229,7 @@ SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
     @type Integer
   */
   timezone: 0,
-  
+
   /**
     A `SC.DateTime` instance is frozen by default for better performance.
 
@@ -279,6 +279,7 @@ SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
     Generic getter.
 
     The properties you can get are:
+
       - `year`
       - `month` (January is 1, contrary to JavaScript Dates for which January is 0)
       - `day`
@@ -289,6 +290,7 @@ SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
       - `millisecond`
       - `milliseconds`, the number of milliseconds since
         January, 1st 1970 00:00:00.0 UTC
+      - `elapsed`, the number of milliseconds until (-), or since (+), the date.
       - `isLeapYear`, a boolean value indicating whether the receiver's year
         is a leap year
       - `daysInMonth`, the number of days of the receiver's current month
@@ -313,36 +315,94 @@ SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
     like the C strftime function.
 
     The format parameter can contain the following characters:
-      - %a -- The abbreviated weekday name (``Sun'')
-      - %A -- The full weekday name (``Sunday'')
-      - %b -- The abbreviated month name (``Jan'')
-      - %B -- The full month name (``January'')
-      - %c -- The preferred local date and time representation
-      - %d -- Day of the month (01..31)
-      - %D -- Day of the month (0..31)
-      - %h -- Hour of the day, 24-hour clock (0..23)
-      - %H -- Hour of the day, 24-hour clock (00..23)
-      - %i -- Hour of the day, 12-hour clock (1..12)
-      - %I -- Hour of the day, 12-hour clock (01..12)
-      - %j -- Day of the year (001..366)
-      - %m -- Month of the year (01..12)
-      - %M -- Minute of the hour (00..59)
-      - %p -- Meridian indicator (``AM'' or ``PM'')
-      - %S -- Second of the minute (00..60)
-      - %s -- Milliseconds of the second (000..999)
-      - %U -- Week number of the current year,
+
+      - `%a` -- The abbreviated weekday name ("Sun")
+      - `%A` -- The full weekday name ("Sunday")
+      - `%b` -- The abbreviated month name ("Jan")
+      - `%B` -- The full month name ("January")
+      - `%c` -- The preferred local date and time representation
+      - `%d` -- Day of the month (01..31)
+      - `%D` -- Day of the month (0..31)
+      - `%E` -- Elapsed time, according to localized text formatting strings. See below.
+      - `%h` -- Hour of the day, 24-hour clock (0..23)
+      - `%H` -- Hour of the day, 24-hour clock (00..23)
+      - `%i` -- Hour of the day, 12-hour clock (1..12)
+      - `%I` -- Hour of the day, 12-hour clock (01..12)
+      - `%j` -- Day of the year (001..366)
+      - `%m` -- Month of the year (01..12)
+      - `%M` -- Minute of the hour (00..59)
+      - `%p` -- Meridian indicator ("AM" or "PM")
+      - `%S` -- Second of the minute (00..60)
+      - `%s` -- Milliseconds of the second (000..999)
+      - `%U` -- Week number of the current year,
           starting with the first Sunday as the first
           day of the first week (00..53)
-      - %W -- Week number of the current year,
-          starting with the first Monday as the first 
+      - `%W` -- Week number of the current year,
+          starting with the first Monday as the first
           day of the first week (00..53)
-      - %w -- Day of the week (Sunday is 0, 0..6)
-      - %x -- Preferred representation for the date alone, no time
-      - %X -- Preferred representation for the time alone, no date
-      - %y -- Year without a century (00..99)
-      - %Y -- Year with century
-      - %Z -- Time zone (ISO 8601 formatted)
-      - %% -- Literal ``%'' character
+      - `%w` -- Day of the week (Sunday is 0, 0..6)
+      - `%x` -- Preferred representation for the date alone, no time
+      - `%X` -- Preferred representation for the time alone, no date
+      - `%y` -- Year without a century (00..99)
+      - `%Y` -- Year with century
+      - `%Z` -- Time zone (ISO 8601 formatted)
+      - `%%` -- Literal "%" character
+
+    The Elapsed date format is a special, SproutCore specific formatting
+    feature which will return an accurate-ish, human readable indication
+    of elapsed time. For example, it might return "In 5 minutes", or "A year
+    ago".
+
+    For example,
+
+        var date = SC.DateTime.create();
+
+        date.toFormattedString("%E"); // "Right now"
+
+        date.advance({ minute: 4 });
+        date.toFormattedString("%E"); // "In 4 minutes"
+
+        date.advance({ day: -7 });
+        date.toFormattedString("%E"); // "About a week ago"
+
+    To customize the output for the %E formatter, override the date
+    localization strings inside of in your app.  The English localization
+    strings used are:
+
+        '_SC.DateTime.now' : 'Right now',
+        '_SC.DateTime.secondIn' : 'In a moment',
+        '_SC.DateTime.secondsIn' : 'In %e seconds',
+        '_SC.DateTime.minuteIn' : 'In a minute',
+        '_SC.DateTime.minutesIn' : 'In %e minutes',
+        '_SC.DateTime.hourIn' : 'An hour from now',
+        '_SC.DateTime.hoursIn' : 'In about %e hours',
+        '_SC.DateTime.dayIn' : 'Tomorrow at %i:%M %p',
+        '_SC.DateTime.daysIn' : '%A at %i:%M %p',
+        '_SC.DateTime.weekIn' : 'Next week',
+        '_SC.DateTime.weeksIn' : 'In %e weeks',
+        '_SC.DateTime.monthIn' : 'Next month',
+        '_SC.DateTime.monthsIn' : 'In %e months',
+        '_SC.DateTime.yearIn' : 'Next year',
+        '_SC.DateTime.yearsIn' : 'In %e years',
+
+        '_SC.DateTime.secondAgo' : 'A moment ago',
+        '_SC.DateTime.secondsAgo' : '%e seconds ago',
+        '_SC.DateTime.minuteAgo' : 'A minute ago',
+        '_SC.DateTime.minutesAgo' : '%e minutes ago',
+        '_SC.DateTime.hourAgo' : 'An hour ago',
+        '_SC.DateTime.hoursAgo' : 'About %e hours ago',
+        '_SC.DateTime.dayAgo' : 'Yesterday at %i:%M %p',
+        '_SC.DateTime.daysAgo' : '%A at %i:%M %p',
+        '_SC.DateTime.weekAgo' : 'About a week ago',
+        '_SC.DateTime.weeksAgo' : '%e weeks ago',
+        '_SC.DateTime.monthAgo' : 'About a month ago',
+        '_SC.DateTime.monthsAgo' : '%e months ago',
+        '_SC.DateTime.yearAgo' : 'Last year',
+        '_SC.DateTime.yearsAgo' : '%e years ago'
+
+    Notice the special "%e" parameter in the localized strings.  This will be
+    replaced with the number of intervals (seconds, minutes, weeks, etc) that
+    are appropriate.
 
     @param {String} format the format string
     @return {String} the formatted string
@@ -370,7 +430,7 @@ SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
     `SC.DateTime` is designed, calling `SC.DateTime._toFormattedString` would
     have a nasty side effect. We shouldn't therefore call any of
     `SC.DateTime`'s methods from `toString`)
-    
+
     @returns {String}
   */
   toString: function() {
@@ -379,7 +439,7 @@ SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
            ", timezone: " +
            this.timezone;
   },
-  
+
   /**
     Returns `YES` if the passed `SC.DateTime` is equal to the receiver, ie: if their
     number of milliseconds since January, 1st 1970 00:00:00.0 UTC are equal.
@@ -402,7 +462,7 @@ SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
   copy: function() {
     return this;
   },
-  
+
   /**
     Returns a copy of the receiver with the timezone set to the passed
     timezone. The returned value is equal to the receiver (ie `SC.Compare`
@@ -421,7 +481,7 @@ SC.DateTime = SC.Object.extend(SC.Freezable, SC.Copyable,
     if (timezone === undefined) timezone = 0;
     return this.advance({ timezone: timezone - this.timezone });
   }
-  
+
 });
 
 SC.DateTime.mixin(SC.Comparable,
@@ -447,7 +507,7 @@ SC.DateTime.mixin(SC.Comparable,
     @default ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   */
   dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  
+
   /**
     @private
 
@@ -456,7 +516,7 @@ SC.DateTime.mixin(SC.Comparable,
     @type Array
   */
   _englishDayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  
+
   /**
     @type Array
     @default ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -474,13 +534,13 @@ SC.DateTime.mixin(SC.Comparable,
     @default ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
   */
   abbreviatedMonthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  
+
   /**
     @type Array
     @default ['AM', 'PM']
   */
   AMPMNames:['AM', 'PM'],
-  
+
   /**
     @private
 
@@ -509,7 +569,7 @@ SC.DateTime.mixin(SC.Comparable,
     @type Integer
   */
   _tz: 0,
-  
+
   /**
     The offset, in minutes, between UTC and the local system time. This
     property is computed at loading time and should never be changed.
@@ -519,7 +579,7 @@ SC.DateTime.mixin(SC.Comparable,
     @constant
   */
   timezone: new Date().getTimezoneOffset(),
-  
+
   /**
     @private
 
@@ -530,7 +590,7 @@ SC.DateTime.mixin(SC.Comparable,
     @type Array
   */
   _dt_cache: {},
-  
+
   /**
     @private
 
@@ -628,7 +688,7 @@ SC.DateTime.mixin(SC.Comparable,
       suffix = key.slice(4);
       if (prefix === 'last' || prefix === 'next') {
         currentWeekday = this._get('dayOfWeek', start, timezone);
-        targetWeekday = this._englishDayNames.indexOf(suffix);    
+        targetWeekday = this._englishDayNames.indexOf(suffix);
         if (targetWeekday >= 0) {
           var delta = targetWeekday - currentWeekday;
           if (prefix === 'last' && delta >= 0) delta -= 7;
@@ -672,6 +732,9 @@ SC.DateTime.mixin(SC.Comparable,
           break;
         case 'millisecond':
           v = d.getUTCMilliseconds();
+          break;
+        case 'elapsed':
+          v = +new Date() - d.getTime() - (timezone * 60000);
           break;
       }
 
@@ -745,7 +808,7 @@ SC.DateTime.mixin(SC.Comparable,
     this._setCalcState(ms, timezone);
     return this; // for chaining
   },
-  
+
   /**
     @private
     @see SC.DateTime#advance
@@ -764,7 +827,7 @@ SC.DateTime.mixin(SC.Comparable,
 
     return this._adjust(opts, start, tz, NO);
   },
-  
+
   /*
     @private
 
@@ -835,7 +898,7 @@ SC.DateTime.mixin(SC.Comparable,
     // to move back to real UTC.
     d.setTime(ms + (tz * 60000));
     ms = d.getTime(); // now get the corrected milliseconds value
-    
+
     // Restore what was there previously before leaving in case someone called this method
     // in the middle of another calculation.
     d.setTime(previousMilliseconds);
@@ -907,7 +970,7 @@ SC.DateTime.mixin(SC.Comparable,
       });
     }
   },
-  
+
   /**
     @private
 
@@ -921,7 +984,7 @@ SC.DateTime.mixin(SC.Comparable,
       timezone: this._tz
     });
   },
-  
+
   /**
     Returns a `SC.DateTime` object created from a given string parsed with a given
     format. Returns `null` if the parsing fails.
@@ -949,6 +1012,8 @@ SC.DateTime.mixin(SC.Comparable,
           case 'c': throw "%c is not implemented";
           case 'd':
           case 'D': opts.day = scanner.scanInt(1, 2); break;
+          case 'e': throw "%e is not implemented";
+          case 'E': throw "%E is not implemented";
           case 'h':
           case 'H': opts.hour = scanner.scanInt(1, 2); break;
           case 'i':
@@ -1008,7 +1073,7 @@ SC.DateTime.mixin(SC.Comparable,
 
     Converts the x parameter into a string padded with 0s so that the string’s
     length is at least equal to the len parameter.
-    
+
     @param {Object} x the object to convert to a string
     @param {Integer} the minimum length of the returned string
     @returns {String} the padded string
@@ -1043,12 +1108,13 @@ SC.DateTime.mixin(SC.Comparable,
       case 'c': return this._date.toString();
       case 'd': return this._pad(this._get('day'));
       case 'D': return this._get('day');
+      case 'E': return this._toFormattedString(this.__getElapsedStringFormat(start, timezone), start, timezone);
       case 'h': return this._get('hour');
       case 'H': return this._pad(this._get('hour'));
       case 'i':
         hour = this._get('hour');
         return (hour === 12 || hour === 0) ? 12 : (hour + 12) % 12;
-      case 'I': 
+      case 'I':
         hour = this._get('hour');
         return this._pad((hour === 12 || hour === 0) ? 12 : (hour + 12) % 12);
       case 'j': return this._pad(this._get('dayOfYear'), 3);
@@ -1086,10 +1152,18 @@ SC.DateTime.mixin(SC.Comparable,
     // need to move into local time zone for these calculations
     this._setCalcState(start - (timezone * 60000), 0); // so simulate a shifted 'UTC' time
 
-    return format.replace(/\%([aAbBcdDhHiIjmMpsSUWwxXyYZ\%])/g, function() {
+    return format.replace(/\%([aAbBcdeEDhHiIjmMpsSUWwxXyYZ\%])/g, function() {
       var v = that.__toFormattedString.call(that, arguments, start, timezone);
       return v;
     });
+  },
+
+  /**
+    @private
+    @see SC.DateTime#toFormattedString
+   */
+  __getElapsedStringFormat: function(start, timezone) {
+    return "";
   },
 
   /**
@@ -1099,11 +1173,12 @@ SC.DateTime.mixin(SC.Comparable,
 
     @param {SC.DateTime} a the first DateTime instance
     @param {SC.DateTime} b the second DateTime instance
-    @returns {Integer} -1 if a < b, 
+    @returns {Integer} -1 if a < b,
                        +1 if a > b,
                        0 if a == b
   */
   compare: function(a, b) {
+    if (SC.none(a) || SC.none(b)) throw "You must pass two valid dates to compare()";
     var ma = a.get('milliseconds');
     var mb = b.get('milliseconds');
     return ma < mb ? -1 : ma === mb ? 0 : 1;
@@ -1123,11 +1198,49 @@ SC.DateTime.mixin(SC.Comparable,
       don't have the same timezone
   */
   compareDate: function(a, b) {
+    if (SC.none(a) || SC.none(b)) throw "You must pass two valid dates to compareDate()";
     if (a.get('timezone') !== b.get('timezone')) throw SC.DATETIME_COMPAREDATE_TIMEZONE_ERROR;
     var ma = a.adjust({hour: 0}).get('milliseconds');
     var mb = b.adjust({hour: 0}).get('milliseconds');
     return ma < mb ? -1 : ma === mb ? 0 : 1;
+  },
+
+  /**
+    Returns the interval of time between the two passed in DateTimes in units
+    according to the format.
+
+    You can display the difference in weeks (w), days (d), hours (h), minutes (M)
+    or seconds (S).
+
+    @param {SC.DateTime} a the first DateTime instance
+    @param {SC.DateTime} b the second DateTime instance
+    @param {String} format the interval to get the difference in
+  */
+  difference: function(a, b, format) {
+    if (SC.none(a) || SC.none(b)) throw "You must pass two valid dates to difference()";
+    var ma = a.get('milliseconds'),
+        mb = b.get('milliseconds'),
+        diff = mb - ma,
+        divider;
+
+    switch(format) {
+      case 'd':
+      case 'D': divider = 864e5; break; // day: 1000 * 60 * 60 * 24
+      case 'h':
+      case 'H': divider = 36e5; break; // hour: 1000 * 60 * 60
+      case 'M': divider = 6e4; break; // minute: 1000 * 60
+      case 'S': divider = 1e3; break; // second: 1000
+      case 's': divider = 1; break;
+      case 'W': divider = 6048e5; break; // week: 1000 * 60 * 60 * 24 * 7
+      default: throw format+" is not supported"; break;
+    }
+
+    var ret = diff/divider;
+
+    return Math.round(ret);
   }
+
+
 
 });
 
