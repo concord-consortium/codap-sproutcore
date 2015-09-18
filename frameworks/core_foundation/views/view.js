@@ -1245,10 +1245,10 @@ SC.CoreView.reopen(
       // The final subtlety is that the SC.ContainerView that is the immediate child of
       // the SC.ScrollView is not affected by the scroll position, so we have to undo
       // the effect of the scroll position on that view when performing our calculations.
-      //if (SC.kindOf(this, SC.ContainerView) && SC.kindOf(pv, SC.ScrollView)) {
+      if (SC.kindOf(this, SC.ContainerView) && SC.kindOf(pv, SC.ScrollView)) {
         gf.x += pv.get('horizontalScrollOffset') || 0;
         gf.y += pv.get('verticalScrollOffset') || 0;
-      //}
+      }
       // Convert the parent view's clippingFrame to global coordinates as well.
       cf = pv.convertFrameToView(cf, null);
       ret = SC.intersectRects(cf, gf);
