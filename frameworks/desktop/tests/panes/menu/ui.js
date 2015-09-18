@@ -24,20 +24,20 @@ var items = [
     }) }
   // { isSeparator: YES },
   // { groupTitle: 'Menu Label', items: [{ title: 'Nested Item' }, { title: 'Nested Item' }] }
-  ];
+];
 
 var menu;
 
 module('SC.MenuPane UI', {
-  setup: function () {
+  setup: function() {
     menu = SC.MenuPane.create({
       layout: { width: 206 },
 
-      selectedItemChanged: function () {
+      selectedItemChanged: function() {
         this._selectedItemCount = (this._selectedItemCount||0)+1;
       }.observes('selectedItem'),
 
-      countAction: function () {
+      countAction: function() {
         this._actionCount = (this._actionCount||0)+1;
       }
     });
@@ -45,14 +45,14 @@ module('SC.MenuPane UI', {
     items[0].target = menu;
     items[0].action = 'countAction';
 
-    items[1].action = function () {
+    items[1].action = function() {
       menu._functionActionCount = (menu._functionActionCount||0)+1;
     };
 
     menu.set('items', items);
   },
 
-  teardown: function () {
+  teardown: function() {
     menu.destroy();
     menu = null;
   }
@@ -70,14 +70,15 @@ function clickOn(view, shiftKey, ctrlKey) {
       opts     = { shiftKey: !!shiftKey, ctrlKey: !!ctrlKey },
       ev;
 
-  ok(layer, 'clickOn() precond - view %@ should have layer'.fmt(view.toString()));
+  ok(layer, 'precond - view %@ should have layer'.fmt(view.toString()));
 
   ev = SC.Event.simulateEvent(layer, 'mousedown', opts);
   SC.Event.trigger(layer, 'mousedown', [ev]);
 
   ev = SC.Event.simulateEvent(layer, 'mouseup', opts);
   SC.Event.trigger(layer, 'mouseup', [ev]);
-  SC.RunLoop.begin().end();
+  SC.RunLoop.begin();
+  SC.RunLoop.end();
   layer = null ;
 }
 
@@ -101,7 +102,7 @@ function keyPressOn(view, keyCode, isKeyPress, shiftKey, ctrlKey) {
       },
       ev;
 
-  ok(layer, 'keyPressOn() precond - view %@ should have layer'.fmt(view.toString()));
+  ok(layer, 'precond - view %@ should have layer'.fmt(view.toString()));
 
   ev = SC.Event.simulateEvent(layer, 'keydown', opts);
   SC.Event.trigger(layer, 'keydown', [ev]);
@@ -113,11 +114,12 @@ function keyPressOn(view, keyCode, isKeyPress, shiftKey, ctrlKey) {
 
   ev = SC.Event.simulateEvent(layer, 'keyup', opts);
   SC.Event.trigger(layer, 'keyup', [ev]);
-  SC.RunLoop.begin().end();
+  SC.RunLoop.begin();
+  SC.RunLoop.end();
   layer = null ;
 }
 
-test('Basic UI', function () {
+test('Basic UI', function(){
   menu.popup();
   ok(menu.$().hasClass('sc-menu'), 'pane should have "sc-menu" class');
   ok(menu.$().hasClass('sc-regular-size'), 'pane should have default control size class');
@@ -127,7 +129,7 @@ test('Basic UI', function () {
   clickOn(menuItem, NO, NO);
   stop();
 
-  setTimeout(function () {
+  setTimeout(function() {
     selectedItem = menu.get('selectedItem');
     ok(selectedItem, 'menu should have selectedItem property set after clicking on menu item');
     equals(selectedItem ? selectedItem.title : null, menuItem.get('content').title, 'selectedItem should be set to the content item that was clicked');
@@ -140,7 +142,7 @@ test('Basic UI', function () {
   }, 250);
 });
 
-test('Control size', function () {
+test('Control size', function() {
   var smallPane, largePane, views, items = [
     { title: 'Can I get get get' },
     { title: 'To know know know know', isSeparator: YES },
@@ -174,14 +176,14 @@ test('Control size', function () {
   largePane.remove();
 });
 
-test('Legacy Function Support', function (){
+test('Legacy Function Support', function(){
   menu.popup();
   var menuItem = menu.get('menuItemViews')[1], selectedItem;
   menuItem.mouseEntered();
   clickOn(menuItem, NO, NO);
   stop();
 
-  setTimeout(function () {
+  setTimeout(function() {
     selectedItem = menu.get('selectedItem');
     equals(1, menu._functionActionCount, 'Function should be called if it is set as the action and the menu item is clicked');
     menu.remove();
@@ -189,7 +191,7 @@ test('Legacy Function Support', function (){
   }, 250);
 });
 
-test('Custom MenuItemView Class', function () {
+test('Custom MenuItemView Class', function() {
   equals(menu.get('exampleView'), SC.MenuItemView, 'SC.MenuPane should generate SC.MenuItemViews by default');
   var menu2 = SC.MenuPane.create({
     exampleView: SC.MenuItemView.extend({
@@ -204,7 +206,7 @@ test('Custom MenuItemView Class', function () {
 });
 
 
-test('Custom MenuItemView Class on an item using itemExampleViewKey', function () {
+test('Custom MenuItemView Class on an item using itemExampleViewKey', function() {
   equals(menu.get('exampleView'), SC.MenuItemView, 'SC.MenuPane should generate SC.MenuItemViews by default');
   menu.popup();
   ok(menu.$('.custom-menu-item').length === 1, 'SC.MenuPane should generate one instance of a custom class if the item has an exampleView property');
@@ -212,7 +214,7 @@ test('Custom MenuItemView Class on an item using itemExampleViewKey', function (
   menu.remove();
 });
 
-test('Basic Submenus', function () {
+test('Basic Submenus', function() {
   var smallMenu = SC.MenuPane.create({
     controlSize: SC.SMALL_CONTROL_SIZE,
     items: items
@@ -225,7 +227,7 @@ test('Basic Submenus', function () {
   subMenu = menuItem.get('subMenu');
   ok(!subMenu.get('isVisibleInWindow'), 'submenus should not open immediately');
   stop();
-  setTimeout(function () {
+  setTimeout(function() {
     ok(subMenu.get('isVisibleInWindow'), 'submenu should open after 100ms delay');
     ok(subMenu.get('isSubMenu'), 'isSubMenu should be YES on submenus');
     ok(subMenu.get('controlSize'), SC.SMALL_CONTROL_SIZE, "submenu should inherit parent's controlSize");
@@ -235,7 +237,7 @@ test('Basic Submenus', function () {
   }, 150);
 });
 
-test('Menu Item Localization', function () {
+test('Menu Item Localization', function() {
   ok(menu.get('localize'), 'menu panes should be localized by default');
   var locMenu, items;
 
@@ -260,7 +262,7 @@ test('Menu Item Localization', function () {
   locMenu.remove();
 });
 
-test('Automatic Closing', function () {
+test('Automatic Closing', function() {
   menu.popup();
   ok(menu.get('isVisibleInWindow'), 'precond - window should be visible');
   menu.windowSizeDidChange();
@@ -271,12 +273,12 @@ test('Automatic Closing', function () {
   ok(!menu.get('isVisibleInWindow'), 'menu should close if anywhere other than a menu item is clicked');
 });
 
-test('keyEquivalents', function () {
+test('keyEquivalents', function() {
   var keyEquivalents = menu._keyEquivalents;
 
   // verify that keyEquivalents were mapped correctly and that multiple
   // keyEquivalents work
-  menu.items.forEach(function (item) {
+  menu.items.forEach(function(item) {
     var keyEq = item.keyEquivalent, idx, len;
     if(!keyEq) return;
 
@@ -291,7 +293,7 @@ test('keyEquivalents', function () {
   });
 });
 
-test('scrolling', function () {
+test('scrolling', function() {
   var currentMenuItem;
 
   menu.popup();
@@ -324,7 +326,7 @@ test('scrolling', function () {
   equals(currentMenuItem.get('title'), 'Menu Item', 'home should move to the first item');
 });
 
-test('aria-role attribute', function () {
+test('aria-role attribute', function() {
   var menuPane = SC.MenuPane.create({
     layout: { width: 200 },
     items: items,
@@ -345,7 +347,7 @@ test('aria-role attribute', function () {
   clickOn(menuPane);
 });
 
-test('aria-checked attribute', function () {
+test('aria-checked attribute', function() {
   var menuPane = SC.MenuPane.create({
     layout: { width: 200 },
     items: items,

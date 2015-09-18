@@ -99,13 +99,14 @@ var pane = SC.ControlTestPane.design()
     })
 
     .add("SelectWithSeparator", SC.SelectView, {
-      items: [{ title: "None", isSeparator: YES },
+      items: [{ title: "None", separator: YES },
         { title: "Low", isEnabled: NO },
-        { isSeparator: YES },
+        { separator: YES },
         { title: "High" }],
       itemTitleKey: 'title'
     });
 
+pane.show();
 
 // ..........................................................
 // TEST VIEWS

@@ -37,7 +37,7 @@ SC.Pane.reopen(
 
       // IE7 is the only browser which reports clientHeight _including_ scrollbar.
       if (SC.browser.name === SC.BROWSER.ie &&
-          SC.browser.compare(SC.browser.version, "7") === 0) {
+          SC.browser.compareVersion(SC.browser.version, "7") === 0) {
 
         var scrollbarSize = SC.platform.get('scrollbarSize');
         if (document.body.scrollWidth > wDim.width) {
@@ -79,7 +79,7 @@ SC.Pane.reopen(
     @returns {SC.Pane} receiver
   */
   windowSizeDidChange: function(oldSize, newSize) {
-    this.set('currentWindowSize', newSize);
+    this.set('currentWindowSize', newSize) ;
     this.setBodyOverflowIfNeeded();
     this.parentViewDidResize(); // start notifications.
     return this ;

@@ -23,7 +23,6 @@
     }
   }).add("auto resize", SC.WebView, {
     value: sc_static('iframe'),
-    includeImage: sc_static('a_sample_image.jpg'), // this simply ensures that the image is added to the build
     shouldAutoResize: YES,
     layout: {
       width: 250,
@@ -38,10 +37,11 @@
     }
   });
 
+  pane.show(); // add a test to show the test pane
   // ..........................................................
   // TEST VIEWS
-  //
-  module('SC.WebView UI', pane.standardSetup());
+  // 
+  module('SC.WebView UI');
 
   test("attributes tests",
   function() {
@@ -92,8 +92,8 @@
   function() {
     var view = pane.view('don\'t auto resize');
     equals(view.get('shouldAutoResize'), NO, 'should have auto resize flag as false');
-
-    /** set the src a bit late so that the following onload event get's hooked
+    
+    /** set the src a bit late so that the following onload event get's hooked 
     up before it actually loads
     */
     SC.RunLoop.begin();
@@ -107,5 +107,4 @@
       start();
     });
   });
-
 })();

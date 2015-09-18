@@ -135,10 +135,10 @@ SC.routes = SC.Object.create(
         separator, parts, i, len, crumbs, key;
 
     separator = (route.indexOf('?') < 0 && route.indexOf('&') >= 0) ? '&' : '?';
-
+    
     parts = route.split(separator);
     route = parts.shift();
-
+    
     params = this.deparam(parts.join('&'), coerce || false);
 
     // overlay any parameter passed in obj
@@ -147,7 +147,7 @@ SC.routes = SC.Object.create(
         params[key] = '' + obj[key];
       }
     }
-
+    
     params.params = separator + $.param(params);
     params.route = route;
 
@@ -348,7 +348,7 @@ SC.routes = SC.Object.create(
 
      - 'users/:action/:id'
      - ':controller/show/:id'
-     - ':controller/*url'
+     - ':controller/ *url' (ignore the space, because of jslint)
 
     @param {String} route the route to be registered
     @param {Object} target the object on which the method will be called, or
@@ -405,35 +405,24 @@ SC.routes = SC.Object.create(
       }
     }
   },
-
+  
   /**
     Function to create an object out of a urlencoded param string.
-
+    
     @param {String} string the parameter string
     @param {Boolean} coerce coerce the values? (Default NO)
   */
   deparam: function(string, coerce) {
     var obj = {},
-      coerce_types = { 'true': !0, 'false': !1, 'null': null },
-      params, len, idx, param, key, val, cur, i, keys, keys_last,
-      dec = decodeURIComponent, toString = Object.prototype.toString;
-
-    // This allows any URL-like string to also be objectified
-    if (string.indexOf('?') >= 0) {
-      string = string.split('?')[1];
-      if (string.indexOf('#') >= 0) {
-        string = string.split('#')[0];
-      }
-    } else if (string.indexOf('#') >= 0) {
-      string = string.split('#')[1];
-    }
-
-    params = string.replace(/\+/g, ' ').split('&');
-    len = params.length;
+        coerce_types = { 'true': !0, 'false': !1, 'null': null },
+        params = string.replace(/\+/g, ' ').split('&'),
+        len = params.length, idx, param, key, val, cur, i, keys, keys_last,
+        dec = decodeURIComponent, toString = Object.prototype.toString;
+  
     for (idx = 0; idx < len; ++idx) {
       param = params[idx].split('='), key = dec(param[0]), cur = obj,
-        keys = key.split(']['), keys_last = key.length - 1;
-
+      keys = key.split(']['), keys_last = key.length - 1;
+      
       if (/\[/.test(keys[0]) && /\]$/.test(keys[keys_last])) {
         keys[keys_last] = keys[keys_last].replace(/\]$/, '');
         keys = keys.shift().split('[').concat(keys);
@@ -442,20 +431,20 @@ SC.routes = SC.Object.create(
 
       if (param.length === 2) {
         val = dec(param[1]);
-
+        
         if (coerce) {
           val = val && !isNaN(val)              ? +val              // gotta be a number
-            : val === 'undefined'             ? undefined
-            : coerce_types[val] !== undefined ? coerce_types[val]
-            : val;
+              : val === 'undefined'             ? undefined
+              : coerce_types[val] !== undefined ? coerce_types[val]
+              : val;
         }
 
         if (keys_last) {
           for (i = 0; i < keys_last; ++i) {
             key = keys[i] === '' ? cur.length : keys[i];
             cur = cur[key] = i < keys_last
-              ? cur[key] || (keys[i + 1] && isNaN(keys[i + 1]) ? {} : [])
-              : val;
+                ? cur[key] || (keys[i + 1] && isNaN(keys[i + 1]) ? {} : [])
+                : val;
           }
         } else {
           if (toString.apply(obj[key]) === '[object Array]') obj[key].push(val);
@@ -465,7 +454,7 @@ SC.routes = SC.Object.create(
       } else if (key) {
         obj[key] = coerce ? undefined : '';
       }
-    }
+    }  
     return obj;
   },
 

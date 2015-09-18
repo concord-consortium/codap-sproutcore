@@ -53,6 +53,6 @@ SC.View.reopen(
     original(context);
 
     context.setClass('disabled', !isEnabled);
-    context.setAttr('aria-disabled', !isEnabled ? YES : null);
+    context.attr('aria-disabled', !isEnabled ? 'true' : null);
   }.enhance()
 });

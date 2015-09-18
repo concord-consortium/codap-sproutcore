@@ -160,6 +160,10 @@ var pane = SC.ControlTestPane.design({ height: 32 })
     outlineLevel: 2
   })) ;
 
+pane.show();
+
+window.pane = pane ;
+
 // ..........................................................
 // DETECTORS
 //

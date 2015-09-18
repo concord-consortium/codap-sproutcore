@@ -55,6 +55,7 @@ failEditor = SC.View.extend(SC.InlineEditor, {
   }
 });
 
+testPane.show();
 
 module("SC.InlineTextFieldDelegate basic", testPane.standardSetup());
 
@@ -64,12 +65,10 @@ test("basic acquire and release", function() {
 
   ok(editor.kindOf(SC.InlineTextFieldView), "acquired an inlineTextFieldView");
   same(editor.get('pane'), label.get('pane'), "editor created in the correct pane");
-  same(editor.get('parentView'), label.get('parentView'), "editor created in the correct parent");
 
   SC.InlineTextFieldDelegate.releaseEditor(editor);
 
   same(editor.get('pane'), null, "editor removed from pane after release");
-  same(editor.get('parentView'), null, "editor removed from parent view after release");
 });
 
 test("acquire custom editor", function() {

@@ -29,16 +29,15 @@ $theme.sc-segment-view {
   }
 
   .sc-button-label {
+    padding: 0px;
     font-size: 13px;
-    line-height: 30px;
+    top: 4px;
     margin-left: 9px;
     margin-right: 10px;
   }
 
-  img.icon {
-    height: 16px;
-    top: 7px;
-    width: 16px;
+  img {
+    top: -2px;
   }
 
   &.sc-first-segment .left {

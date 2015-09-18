@@ -68,14 +68,8 @@ SC.Observers = {
 
     tuple = SC.tupleForPropertyPath(propertyPath, pathRoot) ;
     if (tuple) {
-      tuple[0].removeObserver(tuple[1], target, method);
+      tuple[0].removeObserver(tuple[1], target, method) ;
     }
-    //@if(debug)
-    // Add some developer support indicating that the observer was not removed.
-    else {
-      SC.warn("Developer Warning: Attempted to remove observer for propertyPath %@ with root %@ and failed.  This may be because an object that the path refers to is no longer available.".fmt(propertyPath, pathRoot));
-    }
-    //@endif
 
     // tests show that the fastest way is to create a new array. On Safari,
     // it is fastest to set to null then loop over again to collapse, but for all other browsers
@@ -118,14 +112,14 @@ SC.Observers = {
     // flush any observers that we tried to setup but didn't have a path yet
     var oldQueue = this.queue, i,
         queueLen = oldQueue.length;
-
+    
     if (oldQueue && queueLen > 0) {
       var newQueue = (this.queue = []) ;
 
       for (i=0; i<queueLen; i++ ) {
         var item = oldQueue[i];
         if ( !item ) continue;
-
+        
         var tuple = SC.tupleForPropertyPath( item[0], item[3] );
         // check if object is observable (yet) before adding an observer
         if( tuple && tuple[0].addObserver ) {
@@ -135,7 +129,7 @@ SC.Observers = {
         }
       }
     }
-
+    
     // if this object needsRangeObserver then see if any pending range
     // observers need it.
     if ( object._kvo_needsRangeObserver ) {

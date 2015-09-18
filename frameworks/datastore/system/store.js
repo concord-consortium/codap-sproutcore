@@ -673,16 +673,6 @@ SC.Store = SC.Object.extend( /** @scope SC.Store.prototype */ {
       }
     }
 
-    // Also reset all pre-created recordArrays.
-    var ra, raList = this.get('recordArrays');
-    if (raList) {
-      while (ra = raList.pop()) {
-        ra.destroy();
-      }
-      raList.clear();
-      this.set('recordArrays', null);
-    }
-
     this.set('hasChanges', NO);
   },
 

@@ -455,7 +455,7 @@ SC.CoreView.reopen(
 
       // A strange case, that a childView's frame won't be correct before
       // we have a layer, if the childView doesn't have a fixed layout
-      // and we are using static layout.
+      // and we are using static layout
       if (this.get('useStaticLayout')) {
         if (!childView.get('isFixedLayout')) { childView.viewDidResize(); }
       }
@@ -603,7 +603,7 @@ SC.CoreView.reopen(
       }
     }
 
-    parentNode = parentView = node = nextNode = null; // avoid memory leaks
+    parentNode = parentView = node = nextNode = null ; // avoid memory leaks
 
     this.set('layerLocationNeedsUpdate', NO) ;
 
@@ -691,7 +691,7 @@ SC.CoreView.reopen(
   },
 
   _renderLayerSettings: function(context, firstTime) {
-    context.resetClasses();
+    context.resetClassNames();
     context.resetStyles();
 
     this.applyAttributesToContext(context);
@@ -710,12 +710,12 @@ SC.CoreView.reopen(
     if (this.get('isFirstResponder')) { context.addClass('focus'); }
 
     context.id(this.get('layerId'));
-    context.setAttr('role', this.get('ariaRole'));
+    context.attr('role', this.get('ariaRole'));
 
     var _ariaHidden = this.get('ariaHidden');
-    if (_ariaHidden !== null) {
-      if (_ariaHidden === NO) context.removeAttr('aria-hidden');
-      else context.setAttr('aria-hidden', _ariaHidden);
+    if(_ariaHidden!==null){
+      if(_ariaHidden === NO) context.removeAttr('aria-hidden');
+      else context.attr('aria-hidden', _ariaHidden);
     }
   },
 
@@ -1132,11 +1132,6 @@ SC.CoreView.reopen(
 
     // Register the view for event handling. This hash is used by
     // SC.RootResponder to dispatch incoming events.
-    //@if(debug)
-    if (SC.View.views[this.get('layerId')]) {
-      SC.error("Developer Error: A view with layerId, '%@', already exists.  Each view must have a unique layerId.".fmt(this.get('layerId')));
-    }
-    //@endif
     SC.View.views[this.get('layerId')] = this;
 
     // setup classNames
@@ -1236,20 +1231,38 @@ SC.CoreView.reopen(
   clippingFrame: function() {
     var f = this.get('frame'),
         ret = f,
-        pv, cf;
+        pv, cf, gf;
 
     if (!f) return null;
     pv = this.get('parentView');
     if (pv) {
       cf = pv.get('clippingFrame');
       if (!cf) return { x: 0, y: 0, width: f.width, height: f.height};
-      ret = SC.intersectRects(cf, f);
+      // [KCPT] The original SproutCore implementation didn't account for scrolling.
+      // To do so, we convert everything to global coordinates and perform our
+      // view intersections in global coordinates.
+      gf = pv.convertFrameToView(f, null);
+      // The final subtlety is that the SC.ContainerView that is the immediate child of
+      // the SC.ScrollView is not affected by the scroll position, so we have to undo
+      // the effect of the scroll position on that view when performing our calculations.
+      //if (SC.kindOf(this, SC.ContainerView) && SC.kindOf(pv, SC.ScrollView)) {
+        gf.x += pv.get('horizontalScrollOffset') || 0;
+        gf.y += pv.get('verticalScrollOffset') || 0;
+      //}
+      // Convert the parent view's clippingFrame to global coordinates as well.
+      cf = pv.convertFrameToView(cf, null);
+      ret = SC.intersectRects(cf, gf);
+      // Convert back to view coordinates before returning
+      ret = this.convertFrameFromView(ret, null, true);
+      // [/KCPT]
     }
-    ret.x -= f.x;
-    ret.y -= f.y;
+    else {
+      ret.x -= f.x;
+      ret.y -= f.y;
+    }
 
     return ret;
-  }.property('parentView', 'frame').cacheable(),
+  }.property('parentView', 'frame', 'horizontalScrollOffset', 'verticalScrollOffset').cacheable(),
 
   /** @private
     This method is invoked whenever the clippingFrame changes, notifying
@@ -1315,17 +1328,12 @@ SC.CoreView.reopen(
     memory manager.
   */
   destroy: function() {
-    var ret;
-    // Fast path!
-    if (this.get('isDestroyed')) { return this; }
+    if (this.get('isDestroyed')) { return this; } // nothing to do
 
-    // Do generic destroy. It takes care of mixins and sets isDestroyed to YES.
-    // Do this first, since it cleans up bindings that may apply to parentView
-    // (which we will soon null out).
-    ret = sc_super();
-    this._destroy();
+    this._destroy(); // core destroy method
 
-    return ret;
+    //Do generic destroy. It takes care of mixins and sets isDestroyed to YES.
+    return sc_super();
   },
 
   _destroy: function() {
@@ -1377,45 +1385,36 @@ SC.CoreView.reopen(
   createChildViews: function() {
     var childViews = this.get('childViews'),
         len        = childViews.length,
-        isNoLongerValid = false,
-        idx, key, views, view;
+        idx, key, views, view ;
 
-    this.beginPropertyChanges();
+    this.beginPropertyChanges() ;
 
     // swap the array
-    for (idx = 0; idx < len; ++idx) {
-      key = view = childViews[idx];
+    for (idx=0; idx<len; ++idx) {
+      if (key = (view = childViews[idx])) {
 
-      // is this is a key name, lookup view class
-      if (typeof key === SC.T_STRING) {
-        view = this[key];
-      } else {
-        key = null;
+        // is this is a key name, lookup view class
+        if (typeof key === SC.T_STRING) {
+          view = this[key];
+        } else {
+          key = null ;
+        }
+
+        if (!view) {
+          SC.Logger.error ("No view with name "+key+" has been found in "+this.toString());
+          // skip this one.
+          continue;
+        }
+
+        // createChildView creates the view if necessary, but also sets
+        // important properties, such as parentView
+        view = this.createChildView(view) ;
+        if (key) { this[key] = view ; } // save on key name if passed
       }
-
-      if (!view) {
-        //@if(debug)
-        SC.warn("Developer Warning: The child view named '%@' was not found in the view, %@.  This child view will be ignored.".fmt(key, this));
-        //@endif
-
-        // skip this one.
-        isNoLongerValid = true;
-        childViews[idx] = null;
-        continue;
-      }
-
-      // createChildView creates the view if necessary, but also sets
-      // important properties, such as parentView
-      view = this.createChildView(view);
-      if (key) { this[key] = view; } // save on key name if passed
-
       childViews[idx] = view;
     }
 
-    // Set childViews to be only the valid array.
-    if (isNoLongerValid) { this.set('childViews', childViews.compact()); }
-
-    this.endPropertyChanges();
+    this.endPropertyChanges() ;
     return this ;
   },
 
@@ -1510,7 +1509,7 @@ SC.CoreView.mixin(/** @scope SC.CoreView.prototype */ {
   design: function() {
     if (this.isDesign) {
       // @if (debug)
-      SC.Logger.warn("Developer Warning: .design() was called twice for %@.".fmt(this));
+      SC.Logger.warn("SC.View#design called twice for %@.".fmt(this));
       // @endif
       return this;
     }

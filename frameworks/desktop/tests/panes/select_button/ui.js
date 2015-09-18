@@ -84,6 +84,8 @@ var pane = SC.ControlTestPane.design()
       checkboxEnabled: YES
     }) ;
 
+    pane.show();
+
 // ..........................................................
 // TEST VIEWS
 //

@@ -48,6 +48,9 @@ var pane = SC.ControlTestPane.design()
     })
   }));
 
+pane.show(); // add a test to show the test pane
+window.pane = pane;
+
 module("SC.GridView - drag and drop", pane.standardSetup());
 
 test("drag on default grid view", function() {

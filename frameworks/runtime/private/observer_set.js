@@ -33,13 +33,11 @@ SC.ObserverSet = {
         indexes    = targets[targetGuid],       // get the set of methods
         index, member;
 
-    if ( !indexes ) indexes = targets[targetGuid] = { _size: 0 };
+    if ( !indexes ) indexes = targets[targetGuid] = {};
 
     index = indexes[methodGuid];
     if (index === undefined) {
       indexes[methodGuid] = members.length;
-      // Increase the size of the indexes for this target so that it can be cleaned up.
-      indexes._size++;
       member = [target, method, context];
 
       //@if(debug)
@@ -97,16 +95,8 @@ SC.ObserverSet = {
       this._members[SC.guidFor(entry[0])][SC.guidFor(entry[1])] = index;
     }
 
-    // Throw away the last member (it has been moved or is the member we are removing).
     members.pop();
-
-    // Remove the method tracked for the target.
     delete this._members[targetGuid][methodGuid];
-
-    // If there are no more methods tracked on the target, remove the target.
-    if (--this._members[targetGuid]._size === 0) {
-      delete this._members[targetGuid];
-    }
 
     return true;
   },
