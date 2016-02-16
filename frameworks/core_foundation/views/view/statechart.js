@@ -2123,7 +2123,9 @@ SC.CoreView.reopen(
     }
 
     // Execute the incoming transition.
-    transitionIn.run(this, options, this._preTransitionLayout, this._preTransitionFrame);
+    if (transitionIn.run) {
+      transitionIn.run(this, options, this._preTransitionLayout, this._preTransitionFrame);
+    }
 
     // Set the proper state.
     this._gotoAttachedBuildingInState();
