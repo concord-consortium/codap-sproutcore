@@ -478,6 +478,7 @@ SC.View.reopen(
     return SC.View.LayoutStyleCalculator.calculate(this, style);
 
   // 'hasAcceleratedLayer' is dependent on 'layout' so we don't need 'layout' to be a dependency here
-  }.property('hasAcceleratedLayer', 'useStaticLayout').cacheable()
+    // [CC] contrary to the comment above, we must add 'layout' to the dependencies [/CC]
+  }.property('layout', 'hasAcceleratedLayer', 'useStaticLayout').cacheable()
 
 });
