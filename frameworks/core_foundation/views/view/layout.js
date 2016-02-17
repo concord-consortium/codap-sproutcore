@@ -32,6 +32,7 @@ SC.LAYOUT_AUTO = 'auto';
 // Regexes representating valid values for rotation and scale layout properties
 SC._ROTATION_VALUE_REGEX = /^\-?\d+(\.\d*)?(rad|deg)$/;
 SC._SCALE_VALUE_REGEX = /^\d+(,\d+){0,2}$/;
+SC._PERCENT_VALUE_REGEX = /^\-?\d+(\.\d*)?%$/;  // [CC] allow percents [/CC]
 
 SC.View.reopen(
   /** @scope SC.View.prototype */ {
@@ -1152,7 +1153,9 @@ SC.View.reopen(
 
         var layoutValue = value[property];
         if (isNaN(layoutValue) && (layoutValue !== SC.LAYOUT_AUTO) &&
-            !SC._ROTATION_VALUE_REGEX.exec(layoutValue) && !SC._SCALE_VALUE_REGEX.exec(layoutValue)) {
+            !SC._ROTATION_VALUE_REGEX.exec(layoutValue) &&
+            !SC._SCALE_VALUE_REGEX.exec(layoutValue) &&
+            !SC._PERCENT_VALUE_REGEX.exec(layoutValue)) { // [CC] allow percents [/CC]
           throw new Error("SC.View layout property set to invalid value, %@: %@.".fmt(property, layoutValue));
         }
       }
