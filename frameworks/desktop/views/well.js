@@ -68,7 +68,9 @@ SC.WellView = SC.ContainerView.extend(
    */
   _sc_contentViewDidChange: function () {
     var contentView = this.get('contentView');
-    contentView.set('layout', this.contentLayout);
+    if (contentView) {  // [CC] add null test [/CC]
+      contentView.set('layout', this.contentLayout);
+    }
 
     sc_super();
   }
