@@ -368,8 +368,10 @@ SC.ContainerView = SC.View.extend(
       // If the content already belongs to a content statechart reuse that statechart.
       if (found) {
         newStatechart = contentStatecharts[i];
-        newStatechart.set('previousStatechart', currentStatechart);
-        newStatechart.gotoEnteringState();
+        if (newStatechart) {
+          newStatechart.set('previousStatechart', currentStatechart);
+          newStatechart.gotoEnteringState();
+        }
       }
     }
 
