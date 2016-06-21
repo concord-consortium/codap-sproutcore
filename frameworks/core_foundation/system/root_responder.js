@@ -2227,6 +2227,18 @@ SC.RootResponder = SC.Object.extend(
       if (this._lastMoveX === evt.clientX && this._lastMoveY === evt.clientY) return;
     }
 
+    // BEGIN CODAP change
+    // On firefox v47 the event target can sometimes be the Document. This appears
+    // to happen if the natural target is removed after the start of the mouse
+    // action. Sproutcore assumes (in Core.viewFor) that the target is an element
+    // and fails. We protect against this possibility by ignoring the event.
+    // 6/21/2016
+    if (!(evt.target instanceof Element)) {
+      SC.warn('mousemove target not element: ' + (evt && evt.target && evt.target.constructor.name));
+      return;
+    }
+    // END CODAP change
+
     // We'll record the last positions in all browsers, in case a special pane
     // or some such UI absolutely needs this information.
     this._lastMoveX = evt.clientX;
