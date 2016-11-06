@@ -185,6 +185,9 @@ SC.mixin(/** @lends SC */ {
     // Ensure that every argument is correct and that the proper number of arguments is given.
     if (!(element instanceof Element)) {
       SC.error("Developer Error: Attempt to retrieve the SC.View instance for a non-element in SC.viewFor(): %@".fmt(element));
+      // CODAP change to prevent exception in Firefox
+      return null;
+      // end CODAP change
     }
 
     if (arguments.length > 1) {
