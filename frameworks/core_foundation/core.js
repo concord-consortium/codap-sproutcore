@@ -183,17 +183,18 @@ SC.mixin(/** @lends SC */ {
     //@if(debug)
     // Debug mode only arrgument validation.
     // Ensure that every argument is correct and that the proper number of arguments is given.
-    if (!(element instanceof Element)) {
-      SC.error("Developer Error: Attempt to retrieve the SC.View instance for a non-element in SC.viewFor(): %@".fmt(element));
-      // CODAP change to prevent exception in Firefox
-      return null;
-      // end CODAP change
-    }
 
     if (arguments.length > 1) {
       SC.warn("Developer Warning: SC.viewFor() is meant to be used with only one argument: element");
     }
     //@endif
+
+    // CODAP change to prevent exception in Firefox
+    if (!(element instanceof Element)) {
+      SC.error("Developer Error: Attempt to retrieve the SC.View instance for a non-element in SC.viewFor(): %@".fmt(element));
+      return null;
+    }
+    // end CODAP change
 
     // Search for the view for the given element.
     var viewCache = SC.View.views,
