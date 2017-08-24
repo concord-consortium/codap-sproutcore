@@ -518,21 +518,20 @@ SC.RunLoop.isRunLoopInProgress = function () {
 
   @param {Function} callback callback to execute
   @param {Object} target context for callback
-  @param {Boolean} if YES, starts/ends a new runloop even if one is already running
+  @param {Boolean} forceNested if YES, starts/ends a new runloop even if one is already running
 */
 SC.run = function (callback, target, forceNested) {
   var alreadyRunning = SC.RunLoop.isRunLoopInProgress();
 
   // Only use a try/catch block if we have an ExceptionHandler
   // since in some browsers try/catch causes a loss of the backtrace
-  if (SC.ExceptionHandler && SC.ExceptionHandler.enabled) {
-    try {
-      if (forceNested || !alreadyRunning) SC.RunLoop.begin();
-      if (callback) callback.call(target);
-      if (forceNested || !alreadyRunning) SC.RunLoop.end();
-    } catch (e) {
+  try {
+    if (forceNested || !alreadyRunning) SC.RunLoop.begin();
+    if (callback) callback.call(target);
+  }
+  catch (e) {
+    if (SC.ExceptionHandler && SC.ExceptionHandler.enabled) {
       var handled = SC.ExceptionHandler.handleException(e);
-
       // If the exception was not handled, throw it again so the browser
       // can deal with it (and potentially use it for debugging).
       // (We don't throw it in IE because the user will see two errors)
@@ -540,9 +539,9 @@ SC.run = function (callback, target, forceNested) {
         throw e;
       }
     }
-  } else {
-    if (forceNested || !alreadyRunning) SC.RunLoop.begin();
-    if (callback) callback.call(target);
+
+  }
+  finally {
     if (forceNested || !alreadyRunning) SC.RunLoop.end();
   }
 };
