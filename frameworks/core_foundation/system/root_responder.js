@@ -1222,7 +1222,16 @@ SC.RootResponder = SC.Object.extend(
     }
     this._isMakingTouchResponder = YES;
 
-    var stack = touch.touchResponders, touchesForView;
+    /*
+    Concord Consortium (previously KCPTech) change.
+    We introduced this change to handle an occurence of null touchResponders when processing an 'endTouch.'
+    It came about because in DG.HierarchicalTableView we needed to override touchStart so that we could
+    return false and have the event propagate up the view hierarchy and cause selection of the case table component.
+    We note that when we get here it is through a patch for iOS having to do with touchStart.
+    This change itself cannot harm anything, but we are concerned that the override in DG.HierarchicalTableView
+    may have mucked things up somehow, requiring this change. We don't understand how that might be, however.
+     */
+    var stack = touch.touchResponders || [], touchesForView;
 
     // find the actual responder (if any, I suppose)
     // note that the pane's sendEvent function is slightly clever:
