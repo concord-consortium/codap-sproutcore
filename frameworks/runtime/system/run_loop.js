@@ -523,27 +523,37 @@ SC.RunLoop.isRunLoopInProgress = function () {
 SC.run = function (callback, target, forceNested) {
   var alreadyRunning = SC.RunLoop.isRunLoopInProgress();
 
-  // Only use a try/catch block if we have an ExceptionHandler
-  // since in some browsers try/catch causes a loss of the backtrace
+  // BEGIN CODAP Fix: we intercept exceptions to make sure we at least attempt
+  // to close the runloop. If we do not close the run loop we are dead in
+  // the water. In CODAP's case we have an installed exception handler. We
+  // put up an alert, and suggest the user restart.
   try {
-    if (forceNested || !alreadyRunning) SC.RunLoop.begin();
-    if (callback) callback.call(target);
+    try {
+      if (forceNested || !alreadyRunning) SC.RunLoop.begin();
+      if (callback) callback.call(target);
+    }
+    finally {
+        if (forceNested || !alreadyRunning) SC.RunLoop.end();
+    }
   }
   catch (e) {
+    var handled = false;
     if (SC.ExceptionHandler && SC.ExceptionHandler.enabled) {
-      var handled = SC.ExceptionHandler.handleException(e);
-      // If the exception was not handled, throw it again so the browser
-      // can deal with it (and potentially use it for debugging).
-      // (We don't throw it in IE because the user will see two errors)
-      if (!handled && !SC.browser.isIE) {
-        throw e;
-      }
+      handled = SC.ExceptionHandler.handleException(e);
     }
 
+    if (SC.RunLoop.isRunLoopInProgress()) {
+      SC.RunLoop.kill();
+    }
+
+    // If the exception was not handled, throw it again so the browser
+    // can deal with it (and potentially use it for debugging).
+    // (We don't throw it in IE because the user will see two errors)
+    if (!handled && !SC.browser.isIE) {
+      throw e;
+    }
   }
-  finally {
-    if (forceNested || !alreadyRunning) SC.RunLoop.end();
-  }
+  // END CODAP fix.
 };
 
 /**
