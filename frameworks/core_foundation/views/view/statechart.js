@@ -1959,6 +1959,7 @@ SC.CoreView.reopen(
     case SC.CoreView.UNRENDERED:
     case SC.CoreView.UNATTACHED:
     case SC.CoreView.ATTACHED_HIDDEN:
+    case SC.CoreView.ATTACHED_HIDDEN_BY_PARENT:
       shouldContinue = false;
       break;
 
