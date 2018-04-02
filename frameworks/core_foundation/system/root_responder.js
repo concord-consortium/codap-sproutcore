@@ -2365,7 +2365,13 @@ SC.RootResponder = SC.Object.extend(
   /** @private */
   _dragover: function(evt) {
     // If it's a file being dragged, prevent the default (leaving the app and opening the file).
-    if (evt.dataTransfer.types && (evt.dataTransfer.types.contains('Files') || evt.dataTransfer.types.contains('text/uri-list'))) {
+    // Begin Concord Consortium change: Use Array.includes instead of SC Array.contains
+    // If the dataTransfer types is present, it was created by the browser and readonly.
+    // The 'contains' method is not present.
+    if (evt.dataTransfer && evt.dataTransfer.types &&
+        (evt.dataTransfer.types.includes('Files') ||
+            evt.dataTransfer.types.includes('text/uri-list'))) {
+      // End Concord Consortium Change
       evt.preventDefault();
       evt.stopPropagation();
       // Set the default drag effect to 'none'. Views may reverse this if they wish.
@@ -2422,7 +2428,10 @@ SC.RootResponder = SC.Object.extend(
         view.tryToPerform('dataDragHovered', evt);
       }
       this._lastDraggedOver = nd;
-      this._lastDraggedEvt = evt;
+      // Begin Concord Consortium Change
+      // clone event to protect it from modification during event processing.
+      this._lastDraggedEvt = Object.assign({}, evt);
+      // End Concord Consortium Change
       // For browsers that don't reliably call a dragleave for every dragenter, we have a timer fallback.
       this._dragLeaveTimer = SC.Timer.schedule({ target: this, action: '_forceDragLeave', interval: 300 });
     }
@@ -2436,7 +2445,13 @@ SC.RootResponder = SC.Object.extend(
   /** @private */
   _drop: function(evt) {
     // If it's a file being dragged, prevent the default (leaving the app and opening the file).
-    if (evt.dataTransfer.types && (evt.dataTransfer.types.contains('Files') || evt.dataTransfer.types.contains('text/uri-list'))) {
+    // Begin Concord Consortium change: Use Array.includes instead of SC Array.contains
+    // If the dataTransfer types is present, it was created by the browser and readonly.
+    // The 'contains' method is not present.
+    if (evt.dataTransfer && evt.dataTransfer.types &&
+        (evt.dataTransfer.types.includes('Files') ||
+            evt.dataTransfer.types.includes('text/uri-list'))) {
+      // End Concord Consortium Change
       evt.preventDefault();
       evt.stopPropagation();
       // Set the default drag effect to 'none'. Views may reverse this if they wish.
