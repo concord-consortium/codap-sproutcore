@@ -353,7 +353,7 @@ SC.Drag = SC.Object.extend(
 
     // compute the ghost offset from the original start location
 
-    var loc = { x: evt.pageX, y: evt.pageY };
+    var loc = { x: evt.clientX, y: evt.clientY }; // [CC] pageXY => clientXY
     this.set('location', loc);
 
     if (this.get('sourceIsDraggable')) {
@@ -485,12 +485,12 @@ SC.Drag = SC.Object.extend(
   mouseDragged: function (evt) {
     var scrolled = this._autoscroll(evt);
     var loc = this.get('location');
-    if (!scrolled && (evt.pageX === loc.x) && (evt.pageY === loc.y)) {
+    if (!scrolled && (evt.clientX === loc.x) && (evt.clientY === loc.y)) {  // [CC] pageXY => clientXY
       return; // quickly ignore duplicate calls
     }
 
     // save the new location to avoid duplicate mouseDragged event processing
-    loc = { x: evt.pageX, y: evt.pageY };
+    loc = { x: evt.clientX, y: evt.clientY }; // [CC] pageXY => clientXY
     this.set('location', loc);
     this._lastMouseDraggedEvent = evt;
 
@@ -553,7 +553,7 @@ SC.Drag = SC.Object.extend(
     executes the drop target protocol to try to complete the drag operation.
   */
   mouseUp: function (evt) {
-    var loc    = { x: evt.pageX, y: evt.pageY },
+    var loc    = { x: evt.clientX, y: evt.clientY },  // [CC] pageXY => clientXY
         target = this._lastTarget,
         op     = this.allowedDragOperations;
 
@@ -803,7 +803,7 @@ SC.Drag = SC.Object.extend(
     area.
   */
   _findDropTarget: function (evt) {
-    var loc = { x: evt.pageX, y: evt.pageY };
+    var loc = { x: evt.clientX, y: evt.clientY }; // [CC] pageXY => clientXY
 
     var target, frame;
     var ary = this._dropTargets();
@@ -859,7 +859,7 @@ SC.Drag = SC.Object.extend(
     // - there must be room left to scroll in that direction.
 
     // NOTE: an event is passed only when called from mouseDragged
-    var loc  = evt ? { x: evt.pageX, y: evt.pageY } : this.get('location'),
+    var loc  = evt ? { x: evt.clientX, y: evt.clientY } : this.get('location'), // [CC] pageXY => clientXY
         view = this._findScrollableView(loc),
         scrollableView = null, // become final view when found
         vscroll, hscroll, min, max, container, f;
@@ -949,7 +949,7 @@ SC.Drag = SC.Object.extend(
     // If a scrollable view was found, then check later
     if (scrollableView) {
       if (evt) {
-        this._lastAutoscrollEvent = { pageX: evt.pageX, pageY: evt.pageY };
+        this._lastAutoscrollEvent = { clientX: evt.clientX, clientY: evt.clientY }; // [CC] pageXY => clientXY
       }
       this.invokeLater(this._autoscroll, 100, null);
       return YES;
