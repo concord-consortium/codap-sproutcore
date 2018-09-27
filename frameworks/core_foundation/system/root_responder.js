@@ -2074,6 +2074,9 @@ SC.RootResponder = SC.Object.extend(
   //
 
   mousedown: function(evt) {
+    // If needed, let components handle mouse events
+    if(this.ignoreMouseHandle(evt)) return YES;
+
     // First, save the click count. The click count resets if the mouse down
     // event occurs more than 250 ms later than the mouse up event or more
     // than 8 pixels away from the mouse down event or if the button used is different.
@@ -2119,6 +2122,9 @@ SC.RootResponder = SC.Object.extend(
     sent.
   */
   mouseup: function(evt) {
+    // If needed, let components handle mouse events
+    if(this.ignoreMouseHandle(evt)) return YES;
+
     var clickOrDoubleClickDidTrigger = NO,
       dragView = this._drag,
       handler = null;
@@ -2195,6 +2201,9 @@ SC.RootResponder = SC.Object.extend(
     @returns {Boolean} whether the event should be propagated to the browser
   */
   click: function(evt) {
+      // If needed, let components handle mouse events
+    if(this.ignoreMouseHandle(evt)) return YES;
+
     if (!this._lastMouseUpCustomHandling || !this._lastMouseDownCustomHandling) {
       evt.preventDefault();
       evt.stopPropagation();
@@ -2205,6 +2214,9 @@ SC.RootResponder = SC.Object.extend(
   },
 
   dblclick: function(evt){
+    // If needed, let components handle mouse events
+    if(this.ignoreMouseHandle(evt)) return YES;
+
     if (SC.browser.isIE8OrLower) {
       this._clickCount = 2;
       // this._onmouseup(evt);
@@ -2213,6 +2225,9 @@ SC.RootResponder = SC.Object.extend(
   },
 
   mousewheel: function(evt) {
+    // If needed, let components handle mouse events
+    if(this.ignoreMouseHandle(evt)) return YES;
+
     var view = this.targetViewForEvent(evt) ,
         handler = this.sendEvent('mouseWheel', evt, view) ;
 
@@ -2231,6 +2246,8 @@ SC.RootResponder = SC.Object.extend(
    trigger calls to mouseDragged.
   */
   mousemove: function(evt) {
+    // If needed, let components handle mouse events
+    if(this.ignoreMouseHandle(evt)) return YES;
 
     if (SC.browser.isIE) {
       if (this._lastMoveX === evt.clientX && this._lastMoveY === evt.clientY) return;
@@ -2315,6 +2332,13 @@ SC.RootResponder = SC.Object.extend(
          }
        }
     }, this);
+  },
+
+  /** @private
+     Ignore Mouse events.
+  */
+  ignoreMouseHandle: function(evt) {
+    return NO;
   },
 
   // These event handlers prevent default file handling, and enable the dataDrag API.
