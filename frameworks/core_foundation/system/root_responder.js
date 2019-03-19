@@ -2454,10 +2454,14 @@ SC.RootResponder = SC.Object.extend(
       this._lastDraggedOver = nd;
       // Begin Concord Consortium Change
       // clone event to protect it from modification during event processing.
-      this._lastDraggedEvt = Object.assign({}, evt);
+      this._lastDraggedEvt = new SC.Event(evt.originalEvent || evt);
       // End Concord Consortium Change
       // For browsers that don't reliably call a dragleave for every dragenter, we have a timer fallback.
-      this._dragLeaveTimer = SC.Timer.schedule({ target: this, action: '_forceDragLeave', interval: 300 });
+      // Begin Concord Consortium Change
+      // Adjust timeout. On linux, including ChromeOS, dragover generated only
+      // on mouse move, so, timeout of .3 seconds caused many false drag leaves.
+      this._dragLeaveTimer = SC.Timer.schedule({ target: this, action: '_forceDragLeave', interval: 5000 });
+      // End Concord Consortium Change
     }
   },
 
