@@ -599,6 +599,21 @@ SC.ScrollerView = SC.View.extend(
     return value;
   },
 
+  // [CC] scroll bar supports touch events
+  touchStart: function (evt) {
+    evt.which = 1;
+    return this.mouseDown(evt);
+  },
+
+  touchesDragged: function (evt) {
+    return this.mouseDragged(evt);
+  },
+
+  touchEnd: function (evt) {
+    return this.mouseUp(evt);
+  },
+  // [/CC]
+
   /** @private
     Handles mouse down events and adjusts the value property depending where
     the user clicked.
