@@ -1760,6 +1760,9 @@ SC.RootResponder = SC.Object.extend(
         if (this._drag) {
           this._drag.tryToPerform('mouseUp', touch) ;
           this._drag = null ;
+          // [CC] _mouseDownView must also be cleared to properly end a drag
+          this._mouseDownView = null;
+          // [/CC]
         }
 
         // unassign
