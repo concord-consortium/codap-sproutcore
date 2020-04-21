@@ -1808,6 +1808,10 @@ SC.RootResponder = SC.Object.extend(
   // KEYBOARD HANDLING
   //
 
+  // [CC]
+  ignoreKeyHandle: function(evt) {
+    return NO;
+  },
 
   /**
     Invoked on a keyDown event that is not handled by any actual value.  This
@@ -1931,6 +1935,7 @@ SC.RootResponder = SC.Object.extend(
   */
   keydown: function(evt) {
     if (SC.none(evt)) return YES;
+    if (this.ignoreKeyHandle(evt)) return YES;  // [CC]
     var keyCode = evt.keyCode;
     if (SC.browser.isMozilla && evt.keyCode===9) {
       this.keydownCounter = 1;
@@ -2001,6 +2006,7 @@ SC.RootResponder = SC.Object.extend(
     trigger a keyDown.
   */
   keypress: function(evt) {
+    if (this.ignoreKeyHandle(evt)) return YES;  // [CC]
     var ret,
         keyCode   = evt.keyCode,
         isFirefox = SC.browser.isMozilla;
@@ -2034,6 +2040,7 @@ SC.RootResponder = SC.Object.extend(
   },
 
   keyup: function(evt) {
+    if (this.ignoreKeyHandle(evt)) return YES;  // [CC]
     // to end the simulation of keypress in firefox set the _ffevt to null
     if(this._ffevt) this._ffevt=null;
 
@@ -2533,7 +2540,13 @@ SC.RootResponder = SC.Object.extend(
 
   _mouseCanDrag: YES,
 
+  // [CC]
+  ignoreSelectHandle: function(evt) {
+    return NO;
+  },
+
   selectstart: function(evt) {
+    if (this.ignoreSelectHandle(evt)) return YES; // [CC]
     var targetView = this.targetViewForEvent(evt),
         result = this.sendEvent('selectStart', evt, targetView);
 
