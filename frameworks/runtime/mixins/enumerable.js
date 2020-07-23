@@ -1138,7 +1138,8 @@ Array.prototype.isEnumerable = YES;
       var len = this.length;
       if (target === undefined) target = null;
 
-      var next, ret = null, found = NO;
+      // [CC] return undefined on failure (as per standard)
+      var next, ret = undefined, found = NO;
       for (var idx = 0; idx < len && !found; idx++) {
         next = this[idx];
         if (found = callback.call(target, next, idx, this)) ret = next;
