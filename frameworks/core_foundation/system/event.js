@@ -955,7 +955,7 @@ SC.Event.prototype = {
   */
   preventDefault: function() {
     var evt = this.originalEvent ;
-    if (evt && evt.type !== 'mousewheel') {
+    if (evt) {
       if (evt.preventDefault) evt.preventDefault() ;
       else evt.returnValue = NO ; // IE8
     }
