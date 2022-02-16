@@ -212,10 +212,9 @@ SC.imageQueue = SC.Object.create(/** @scope SC.imageQueue.prototype */ {
 
       // Using bind here instead of setting onabort/onerror/onload directly
       // fixes an issue with images having 0 width and height
-      // cc: bind->on
-      $(img).on('abort', this._imageDidAbort);
-      $(img).on('error', this._imageDidError);
-      $(img).on('load', this._imageDidLoad);
+      $(img).bind('abort', this._imageDidAbort);
+      $(img).bind('error', this._imageDidError);
+      $(img).bind('load', this._imageDidLoad);
       img.src = entry.url ;
       
       // add to loading queue.
